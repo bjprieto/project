@@ -20,31 +20,48 @@ then
 fi
 
 
-# Effects
+# Primary Function
 
 # perform downloads
-
 for web in $(cat $1)
 do
     # extract temporary file name
     file=$(echo $web | grep -Eo '[[:digit:]]+\.txt\.utf-8')
-    printf '%s\n' $file
+    # echo $file # check extraction
 
-    # check if file is preexisting
+    # check if file is preexisting with default wget name
     if ! [[ -f $file ]]
     then
 
 	# download book and extract relevant information
 	wget -q $web
-        title=$(head -1 $file | sed 's/The Project Gutenberg [Ee]Book of[[:space:]]//; s/\,.\+//; s/[[:space:]]/_/g')
-	author=$(grep -E 'Author: ' $file | sed 's/Author: //; s/[[:space:]]/_/g')
-	echo $title
-	echo $author
+        title=$(head -1 $file | sed 's/.\+[Ee]Book[[:space:]]of[[:space:]]//; s/,.\+//; s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
+	author=$(head -1 $file | sed 's/.\+,[[:space:]]by[[:space:]]//; s/[[:space:]]$//;s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
+
+	# check block for info extraction
+	# echo $title
+	# echo $author
+
+	# check author directory exists
+	if ! [[ -d $author ]]
+	then
+
+	    # create corresponding directory and file
+	    mkdir $author
+	    mv $file "$author/$title.txt"
+	else
+
+	    # check book exists in the preexisting directory
+	    if ! [[ -f "$author/$title.txt" ]]
+	    then
+       		mv $file "$author/$title.txt"
+	    else
+		printf 'exists already\n'
+	    fi
+	    
+	fi
+	
     else
 	printf 'exists already\n'
     fi
 done
-
-# scrub for author, title
-# chk book exists in repo
-# if not, download in a directory named after author, file name with book title

@@ -1,9 +1,9 @@
 #!/bin/bash
 # getbooks.sh
 
-# Input Quality Control
 
-# address on Gutenberg.org --> check can wget
+
+# Input Quality Control
 
 # quality control: one argument
 if ! [[ $# -eq 1 ]]
@@ -20,31 +20,63 @@ then
 fi
 
 
-# Effects
+# Primary Function
 
 # perform downloads
-
 for web in $(cat $1)
 do
     # extract temporary file name
     file=$(echo $web | grep -Eo '[[:digit:]]+\.txt\.utf-8')
-    printf '%s\n' $file
+    # echo $file # check extraction
 
-    # check if file is preexisting
+    # check if file is preexisting with default wget name
     if ! [[ -f $file ]]
     then
 
 	# download book and extract relevant information
 	wget -q $web
-        title=
-	author=
-	echo $title
-	echo $author
+        title=$(head -1 $file | sed 's/.\+[Ee]Book[[:space:]]of[[:space:]]//; s/,.\+//; s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
+	author=$(head -1 $file | sed 's/.\+,[[:space:]]by[[:space:]]//; s/[[:space:]]$//;s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
+
+	# check block for info extraction
+	# echo $title
+	# echo $author
+
+	# check author directory exists
+	if ! [[ -d $author ]]
+	   
+	then # create corresponding directory and file
+	    mkdir $author
+	    mv $file "$author/$title.txt"
+	    
+	else # check book exists in the preexisting directory, else move book.txt
+	    if ! [[ -f "$author/$title.txt" ]]
+	    then
+       		mv $file "$author/$title.txt"
+	    fi
+	fi
     else
-	printf 'exists already\n'
+	title=$(head -1 $file | sed 's/.\+[Ee]Book[[:space:]]of[[:space:]]//; s/,.\+//; s/[[:punct:]]//g; s/\ /_/g' | t\│
+r [:upper:] [:lower:])                                                                                                  │aldous_huxley/chrome_yellow.txt
+        author=$(head -1 $file | sed 's/.\+,[[:space:]]by[[:space:]]//; s/[[:space:]]$//;s/[[:punct:]]//g; s/\ /_/g' | \│
+tr [:upper:] [:lower:])                                                                                                 │Note that you should account for the fact that there could be multiple books by the same a
+                                                                                                                        │uthor so a directory might already exist even if a particular book by the author has not y
+        # check block for info extraction                                                                               │et been downloaded.
+        # echo $title                                                                                                   │
+        # echo $author                                                                                                  │Syntax:
+                                                                                                                        │
+        # check author directory exists                                                                                 │The getbooks.sh script should run with the following command:
+        if ! [[ -d $author ]]                                                                                           │
+                                                                                                                        │./getbooks book_list
+        then # create corresponding directory and file                                                                  │
+            mkdir $author                                                                                               │where book_list is a text file containing a list of web addresses for books in UTF-8 text 
+            mv $file "$author/$title.txt"                                                                               │format on Gutenberg.org.
+                                                                                                                        │
+        else # check book exists in the preexisting directory, else move book.txt                                       │General Features:
+            if ! [[ -f "$author/$title.txt" ]]                                                                          │
+            then                                                                                                        │:
+                mv $file "$author/$title.txt"                                                                           ├──────────────────────────────────────────────────────────────────────────────────────────
+            fi                                                                                                          │[13:48]:[~]$ cd repos/project5/test/
+        fi 
     fi
 done
-
-# scrub for author, title
-# chk book exists in repo
-# if not, download in a directory named after author, file name with book title
