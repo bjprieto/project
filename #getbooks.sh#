@@ -36,8 +36,8 @@ do
 
 	# download book and extract relevant information
 	wget -q $web
-        title=$(head -1 $file | sed 's/The Project Gutenberg [Ee]Book of[[:space:]]//; s/\,.\+//; s/[[:space:]]/_/g')
-	author=$(grep -E 'Author: ' $file | sed 's/Author: //; s/[[:space:]]/_/g')
+        title=
+	author=
 	echo $title
 	echo $author
     else
