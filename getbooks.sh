@@ -25,7 +25,7 @@ fi
 # quality control: preliminary UTF-8 format check
 if ! $(grep -Eoq 'https://www.gutenberg.org/ebooks/[[:digit:]]+\.txt\.utf-8' $1)
 then
-    1>&2 printf 'invalid file format; expected at least one web address in plain text UTF-8 format'
+    1>&2 printf 'invalid file format; expected at least one web address in plain text UTF-8 format\n'
     exit
 fi
 
