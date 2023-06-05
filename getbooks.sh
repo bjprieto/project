@@ -35,7 +35,6 @@ fi
 
 for web in $(cat $1)
 do
-
     # Evaluate: Does the book need to be downloaded?
     
     # extract default file name from wget
@@ -45,77 +44,45 @@ do
     # check if file is preexisting with default wget name
     if ! [[ -f $file ]]
     then
-
 	wget -q $web
+    fi
 
-	# quality control: check that the download was sucessful
-	if ! [[ -f $file ]]
-	then
-	    1>&2 printf "$web could not be downloaded; exited program\n"
-	    exit
-	fi
+    # quality control: check that the download was sucessful
+    if ! [[ -f $file ]]
+    then
+        1>&2 printf "$web could not be downloaded; exited program\n"
+        exit
+    fi
 
-	# Extract relevant information and process them
-	# processing: remove punctuation and trailing spaces, change case to lower, change spaces to underscores
-        title=$(head -1 $file | sed 's/.\+[Ee]Book[[:space:]]of[[:space:]]//; s/,.\+//; s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
-	author=$(head -1 $file | sed 's/.\+,[[:space:]]by[[:space:]]//; s/[[:space:]]$//;s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
+    
+    # Extract relevant information and process them
+    # processing: remove punctuation and trailing spaces, change case to lower, change spaces to underscores
+    title=$(head -1 $file | sed 's/.\+[Ee]Book[[:space:]]of[[:space:]]//; s/,.\+//; s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
+    author=$(head -1 $file | sed 's/.\+,[[:space:]]by[[:space:]]//; s/[[:space:]]$//;s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
 
-	# check block for info extraction
-	# echo $title
-	# echo $author
-
+    # check block for info extraction
+    # echo $title
+    # echo $author
 
 	
-	# Sort into directories
+    # Sort into directories
 
-	# Evaluate: Does the author directory need to be made?
-	# check author directory exists
-	if ! [[ -d $author ]]
-	then
-
-	    # create corresponding directory and file
-	    mkdir $author
-	    mv $file "$author/$title.txt"
-	    
-	else
-
-	    # Evaluate: Does the book file need to be sorted?
-	    # check book exists in the preexisting directory
-	    if ! [[ -f "$author/$title.txt" ]]
-	    then
-       		mv $file "$author/$title.txt"
-	    else
-		rm $file
-		1>&2 printf "$file not downloaded; file already exists as $author/$title\n"
-	    fi
-	fi
-
-    # skip download if default book file already exists; undergo same process as above
+    # Evaluate: Does the author directory need to be made?
+    # check author directory exists
+    if ! [[ -d $author ]]
+    then
+        # create corresponding directory and file
+	mkdir $author
+        mv $file "$author/$title.txt"    
     else
-	title=$(head -1 $file | sed 's/.\+[Ee]Book[[:space:]]of[[:space:]]//; s/,.\+//; s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
-	author=$(head -1 $file | sed 's/.\+,[[:space:]]by[[:space:]]//; s/[[:space:]]$//;s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
-	
-	# check block for info extraction
-	# echo $title
-	# echo $author
-
-	# check author directory exists
-	if ! [[ -d $author ]]
-	then
-
-	    # create corresponding directory and file
-	    mkdir $author
-	    mv $file "$author/$title.txt"
+        # Evaluate: Does the book file need to be sorted?
+        # check book exists in the preexisting directory
+        if ! [[ -f "$author/$title.txt" ]]
+        then
+   	    mv $file "$author/$title.txt"
 	else
-
-	    # check book exists in the preexisting directory
-	    if ! [[ -f "$author/$title.txt" ]]
-	    then
-       		mv $file "$author/$title.txt"
-	    else
-		rm $file
-		1>&2 printf "$file not downloaded; file already exists as $author/$title\n"
-	    fi
+      	    rm $file
+	    1>&2 printf "$file not downloaded; file already exists as $author/$title\n"
 	fi
     fi
 done
