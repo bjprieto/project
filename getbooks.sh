@@ -35,7 +35,10 @@ fi
 
 for web in $(cat $1)
 do
-    # extract default file name
+
+    # Evaluate: Does the book need to be downloaded?
+    
+    # extract default file name from wget
     file=$(echo $web | grep -Eo '[[:digit:]]+\.txt\.utf-8')
     # echo $file # check extraction
 
@@ -52,7 +55,7 @@ do
 	    exit
 	fi
 
-	# extract relevant information and process them
+	# Extract relevant information and process them
 	# processing: remove punctuation and trailing spaces, change case to lower, change spaces to underscores
         title=$(head -1 $file | sed 's/.\+[Ee]Book[[:space:]]of[[:space:]]//; s/,.\+//; s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
 	author=$(head -1 $file | sed 's/.\+,[[:space:]]by[[:space:]]//; s/[[:space:]]$//;s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
@@ -61,6 +64,11 @@ do
 	# echo $title
 	# echo $author
 
+
+	
+	# Sort into directories
+
+	# Evaluate: Does the author directory need to be made?
 	# check author directory exists
 	if ! [[ -d $author ]]
 	then
@@ -71,6 +79,7 @@ do
 	    
 	else
 
+	    # Evaluate: Does the book file need to be sorted?
 	    # check book exists in the preexisting directory
 	    if ! [[ -f "$author/$title.txt" ]]
 	    then
@@ -81,7 +90,7 @@ do
 	    fi
 	fi
 
-    # skip download if default book file already exists; undergo same extraction process
+    # skip download if default book file already exists; undergo same process as above
     else
 	title=$(head -1 $file | sed 's/.\+[Ee]Book[[:space:]]of[[:space:]]//; s/,.\+//; s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])
 	author=$(head -1 $file | sed 's/.\+,[[:space:]]by[[:space:]]//; s/[[:space:]]$//;s/[[:punct:]]//g; s/\ /_/g' | tr [:upper:] [:lower:])

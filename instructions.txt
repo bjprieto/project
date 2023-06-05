@@ -1,0 +1,21 @@
+Practical Project 5.
+
+Purpose:
+
+The script getbooks.sh will accept a file containing a list of web addresses for books in plain text UTF-8 format that are found on Gutenberg.org (one book address per line). It will check whether a book has already been downloaded and if it has not the book will be downloaded, placed in a directory named after the author, and the book file will be named after the book title. For example, if a new book is by author "Aldous Huxley" and the book name is "Chrome Yellow" it will be downloaded stored as:
+
+aldous_huxley/chrome_yellow.txt
+
+Note that you should account for the fact that there could be multiple books by the same author so a directory might already exist even if a particular book by the author has not yet been downloaded.
+
+Syntax:
+
+The getbooks.sh script should run with the following command:
+
+./getbooks book_list
+
+where book_list is a text file containing a list of web addresses for books in UTF-8 text format on Gutenberg.org.
+
+General Features:
+
+Add appropriate error checking to your code (e.g., does the file book_list exist? are there internet addresses in the file that do not resolve correctly, etc) and include informative comments that explain what your code is doing. Create and maintain your code in a public github repository under your account named project5.
